@@ -11,13 +11,9 @@ class Spaceship extends Phaser.GameObjects.Sprite {
     }
 
     update() {
-        // move spaceship left
-        //this.x -= this.moveSpeed;
-        this.x = Math.cos(Math.PI * 2 * this.arc / 360) * this.radius + game.config.width/2 - borderUISize;
-        this.y = Math.sin(Math.PI * 2 * this.arc / 360) * this.radius/2 - 20;
-        this.arc += this.moveSpeed * this.direction;
         this.angle = this.arc;
-
+        this.arc += this.moveSpeed * this.direction;
+ 
         //wrap around from left edge to right edge
         if(this.arc > 360) {
             this.arc -= 360;
@@ -35,7 +31,7 @@ class Spaceship extends Phaser.GameObjects.Sprite {
 
     //position reset
     reset() {
-        this.x = game.config.width / 2;
-        this.y = game.config.height;
+        //this.x = game.config.width / 2;
+        //this.y = game.config.height;
     }
 }

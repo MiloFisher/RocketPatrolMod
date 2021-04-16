@@ -7,6 +7,9 @@ class Play extends Phaser.Scene {
         // load images/tile sprites
         this.load.image('rocket', './assets/rocket.png');
         this.load.image('spaceship', './assets/spaceship.png');
+        this.load.image('target1', './assets/hanging_target1.png');
+        this.load.image('target2', './assets/hanging_target2.png');
+        this.load.image('target3', './assets/hanging_target3.png');
         this.load.image('starfield', './assets/starfield.png');
         // load spritesheet
         this.load.spritesheet('explosion', './assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
@@ -26,9 +29,10 @@ class Play extends Phaser.Scene {
         this.p1Rocket = new Rocket(this, game.config.width / 2 + 5, game.config.height - borderUISize - borderPadding, 'rocket', 0, 1).setOrigin(0.5, 0);
         this.p2Rocket = new Rocket(this, game.config.width / 2 - 5, game.config.height - borderUISize - borderPadding, 'rocket', 0, 2).setOrigin(0.5, 0);
         // add spaceships (x3)
-        this.ship01 = new Spaceship(this, game.config.width / 2, game.config.height / 2, 'spaceship', 0, 30, 300, 1, 0).setOrigin(0, 0);
-        this.ship02 = new Spaceship(this, game.config.width / 2, game.config.height / 2, 'spaceship', 0, 20, 300, -1, 180).setOrigin(0,0);
-        this.ship03 = new Spaceship(this, game.config.width / 2, game.config.height / 2, 'spaceship', 0, 10, 200, 1, 90).setOrigin(0,0);
+        this.ship01 = new Spaceship(this, originX, originY, 'target1', 0, 30, 300, 1, 0).setOrigin(0, 0);
+        this.ship02 = new Spaceship(this, originX, originY, 'target2', 0, 20, 275, -1, 180).setOrigin(0,0);
+        this.ship03 = new Spaceship(this, originX, originY, 'target3', 0, 10, 250, 1, 90).setOrigin(0,0);
+        
         // define keys
         keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
@@ -119,10 +123,12 @@ class Play extends Phaser.Scene {
 
     checkCollision(rocket, ship) {
         //simple AABB checking
-        if (rocket.x < ship.x + ship.width && 
-            rocket.x + rocket.width > ship.x && 
-            rocket.y < ship.y + ship.height &&
-            rocket.height + rocket.y > ship. y) {
+        var X = Math.cos(Math.PI * 2 * (ship.arc + 90) / 360) * ship.radius + originX;
+        var Y = Math.sin(Math.PI * 2 * (ship.arc + 90) / 360) * ship.radius + originY;
+        if (rocket.x < X + 64 && 
+            rocket.x + rocket.width > X && 
+            rocket.y < Y + 64 &&
+            rocket.height + rocket.y > Y) {
                 return true;
         } else {
             return false;

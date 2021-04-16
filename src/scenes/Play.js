@@ -12,7 +12,10 @@ class Play extends Phaser.Scene {
         this.load.image('target3', './assets/hanging_target3.png');
         this.load.image('starfield', './assets/starfield.png');
         // load spritesheet
-        this.load.spritesheet('explosion', './assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
+        this.load.spritesheet('explosion', './assets/explosion.png', { frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9 });
+        this.load.spritesheet('points100', './assets/points100.png', { frameWidth: 45, frameHeight: 70, startFrame: 0, endFrame: 9 });
+        this.load.spritesheet('points200', './assets/points200.png', { frameWidth: 45, frameHeight: 70, startFrame: 0, endFrame: 9 });
+        this.load.spritesheet('points500', './assets/points500.png', { frameWidth: 45, frameHeight: 70, startFrame: 0, endFrame: 9 });
     }
 
     create() {
@@ -29,9 +32,9 @@ class Play extends Phaser.Scene {
         this.p1Rocket = new Rocket(this, game.config.width / 2 + 5, game.config.height - borderUISize - borderPadding, 'rocket', 0, 1).setOrigin(0.5, 0);
         this.p2Rocket = new Rocket(this, game.config.width / 2 - 5, game.config.height - borderUISize - borderPadding, 'rocket', 0, 2).setOrigin(0.5, 0);
         // add spaceships (x3)
-        this.ship01 = new Spaceship(this, originX, originY, 'target1', 0, 30, 300, 1, 0).setOrigin(0, 0);
-        this.ship02 = new Spaceship(this, originX, originY, 'target2', 0, 20, 275, -1, 180).setOrigin(0,0);
-        this.ship03 = new Spaceship(this, originX, originY, 'target3', 0, 10, 250, 1, 90).setOrigin(0,0);
+        this.ship01 = new Spaceship(this, originX, originY, 'target1', 0, 300, 1, 0).setOrigin(0, 0);
+        this.ship02 = new Spaceship(this, originX, originY, 'target2', 0, 275, -1, 180).setOrigin(0,0);
+        this.ship03 = new Spaceship(this, originX, originY, 'target3', 0, 250, 1, 90).setOrigin(0,0);
         
         // define keys
         keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
@@ -46,6 +49,21 @@ class Play extends Phaser.Scene {
             key: 'explode',
             frames: this.anims.generateFrameNumbers('explosion', { start: 0, end: 9, first: 0}),
             frameRate: 30
+        });
+        this.anims.create({
+            key: 'points100',
+            frames: this.anims.generateFrameNumbers('points100', { start: 0, end: 9, first: 0 }),
+            frameRate: 10
+        });
+        this.anims.create({
+            key: 'points200',
+            frames: this.anims.generateFrameNumbers('points200', { start: 0, end: 9, first: 0 }),
+            frameRate: 10
+        });
+        this.anims.create({
+            key: 'points500',
+            frames: this.anims.generateFrameNumbers('points500', { start: 0, end: 9, first: 0 }),
+            frameRate: 10
         });
         // initialize score
         this.p1Score = 0;
@@ -97,27 +115,33 @@ class Play extends Phaser.Scene {
         // check collisions
         if(this.checkCollision(this.p1Rocket, this.ship03)) {
             this.p1Rocket.reset();
-            this.shipExplode(this.ship03);
+            //this.shipExplode(this.ship03);
+            this.targetHit(this.ship03);
         }
         if (this.checkCollision(this.p1Rocket, this.ship02)) {
             this.p1Rocket.reset();
-            this.shipExplode(this.ship02);
+            //this.shipExplode(this.ship02);
+            this.targetHit(this.ship02);
         }
         if (this.checkCollision(this.p1Rocket, this.ship01)) {
             this.p1Rocket.reset();
-            this.shipExplode(this.ship01);
+            //this.shipExplode(this.ship01);
+            this.targetHit(this.ship01);
         }
         if (this.checkCollision(this.p2Rocket, this.ship03)) {
-            this.p1Rocket.reset();
-            this.shipExplode(this.ship03);
+            this.p2Rocket.reset();
+            //this.shipExplode(this.ship03);
+            this.targetHit(this.ship03);
         }
         if (this.checkCollision(this.p2Rocket, this.ship02)) {
-            this.p1Rocket.reset();
-            this.shipExplode(this.ship02);
+            this.p2Rocket.reset();
+            //this.shipExplode(this.ship02);
+            this.targetHit(this.ship02);
         }
         if (this.checkCollision(this.p2Rocket, this.ship01)) {
-            this.p1Rocket.reset();
-            this.shipExplode(this.ship01);
+            this.p2Rocket.reset();
+            //this.shipExplode(this.ship01);
+            this.targetHit(this.ship01);
         }
     }
 
@@ -150,5 +174,26 @@ class Play extends Phaser.Scene {
         this.p1Score += ship.points;
         this.scoreLeft.text = this.p1Score; 
         this.sound.play('sfx_explosion'); 
-      }
+    }
+
+    targetHit(target) {
+        var X = Math.cos(Math.PI * 2 * (target.arc + 90) / 360) * target.radius + originX;
+        var Y = Math.sin(Math.PI * 2 * (target.arc + 90) / 360) * target.radius + originY;
+        
+        var p = 'points100';
+        if(target.points == 200) {
+            p = 'points200';
+        }else if(target.points == 500) {
+            p = 'points500';
+        }    
+
+        let points = this.add.sprite(X, Y - 64* 2, p).setOrigin(0, 0);
+        points.anims.play(p);             // play explode animation
+        points.on('animationcomplete', () => {    // callback after anim completes                     // make ship visible again
+            points.destroy();                       // remove explosion sprite
+        });
+        this.p1Score += target.points;
+        this.scoreLeft.text = this.p1Score;
+        this.sound.play('sfx_explosion');
+    }
 }

@@ -7,9 +7,12 @@ class Play extends Phaser.Scene {
         // load images/tile sprites
         this.load.image('rocket', './assets/rocket.png');
         this.load.image('spaceship', './assets/spaceship.png');
+        this.load.image('player1', './assets/player1.png');
+        this.load.image('player2', './assets/player2.png');
         this.load.image('target1', './assets/hanging_target1.png');
         this.load.image('target2', './assets/hanging_target2.png');
         this.load.image('target3', './assets/hanging_target3.png');
+        this.load.image('arrow', './assets/arrow.png');
         this.load.image('starfield', './assets/starfield.png');
         // load spritesheet
         this.load.spritesheet('explosion', './assets/explosion.png', { frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9 });
@@ -29,12 +32,15 @@ class Play extends Phaser.Scene {
         this.add.rectangle(0, 0, borderUISize, game.config.height, 0xFFFFFF).setOrigin(0, 0);
         this.add.rectangle(game.config.width - borderUISize, 0, borderUISize, game.config.height, 0xFFFFFF).setOrigin(0, 0);
         // add rocket (p1)
-        this.p1Rocket = new Rocket(this, game.config.width / 2 + 5, game.config.height - borderUISize - borderPadding, 'rocket', 0, 1).setOrigin(0.5, 0);
-        this.p2Rocket = new Rocket(this, game.config.width / 2 - 5, game.config.height - borderUISize - borderPadding, 'rocket', 0, 2).setOrigin(0.5, 0);
-        // add spaceships (x3)
-        this.ship01 = new Spaceship(this, originX, originY, 'target1', 0, 300, 1, 0).setOrigin(0, 0);
-        this.ship02 = new Spaceship(this, originX, originY, 'target2', 0, 275, -1, 180).setOrigin(0,0);
-        this.ship03 = new Spaceship(this, originX, originY, 'target3', 0, 250, 1, 90).setOrigin(0,0);
+        this.player1 = new Player(this, game.config.width / 2 + 5, spawnHeight, 'player1', 0, 1).setOrigin(0.5, 0);
+        this.player2 = new Player(this, game.config.width / 2 - 5, spawnHeight, 'player2', 0, 2).setOrigin(0.5, 0);
+        // add targets (x3)
+        this.target1 = new Target(this, originX, originY, 'target1', 0, 300, 1, 0).setOrigin(0, 0);
+        this.target2 = new Target(this, originX, originY, 'target2', 0, 275, -1, 180).setOrigin(0,0);
+        this.target3 = new Target(this, originX, originY, 'target3', 0, 250, 1, 90).setOrigin(0,0);
+        // add arrows
+        this.arrow1 = new Arrow(this, this.player1.x, spawnHeight, 'arrow', 0, this.player1).setOrigin(0.5, 0);
+        this.arrow2 = new Arrow(this, this.player2.x, spawnHeight, 'arrow', 0, this.player2).setOrigin(0.5, 0);
         
         // define keys
         keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
@@ -106,53 +112,55 @@ class Play extends Phaser.Scene {
 
         this.starfield.tilePositionX -= 4;
         if(!this.gameOver) {
-            this.p1Rocket.update();
-            this.p2Rocket.update();
-            this.ship01.update();               // update spaceships (x3)
-            this.ship02.update();
-            this.ship03.update();
+            this.player1.update();
+            this.player2.update();
+            this.arrow1.update();
+            this.arrow2.update();
+            this.target1.update();               // update spaceships (x3)
+            this.target2.update();
+            this.target3.update();
         }
         // check collisions
-        if(this.checkCollision(this.p1Rocket, this.ship03)) {
-            this.p1Rocket.reset();
-            //this.shipExplode(this.ship03);
-            this.targetHit(this.ship03);
+        if(this.checkCollision(this.arrow1, this.target3)) {
+            this.arrow1.reset();
+            //this.shipExplode(this.target3);
+            this.targetHit(this.target3);
         }
-        if (this.checkCollision(this.p1Rocket, this.ship02)) {
-            this.p1Rocket.reset();
-            //this.shipExplode(this.ship02);
-            this.targetHit(this.ship02);
+        if (this.checkCollision(this.arrow1, this.target2)) {
+            this.arrow1.reset();
+            //this.shipExplode(this.target2);
+            this.targetHit(this.target2);
         }
-        if (this.checkCollision(this.p1Rocket, this.ship01)) {
-            this.p1Rocket.reset();
-            //this.shipExplode(this.ship01);
-            this.targetHit(this.ship01);
+        if (this.checkCollision(this.arrow1, this.target1)) {
+            this.arrow1.reset();
+            //this.shipExplode(this.target1);
+            this.targetHit(this.target1);
         }
-        if (this.checkCollision(this.p2Rocket, this.ship03)) {
-            this.p2Rocket.reset();
-            //this.shipExplode(this.ship03);
-            this.targetHit(this.ship03);
+        if (this.checkCollision(this.arrow2, this.target3)) {
+            this.arrow2.reset();
+            //this.shipExplode(this.target3);
+            this.targetHit(this.target3);
         }
-        if (this.checkCollision(this.p2Rocket, this.ship02)) {
-            this.p2Rocket.reset();
-            //this.shipExplode(this.ship02);
-            this.targetHit(this.ship02);
+        if (this.checkCollision(this.arrow2, this.target2)) {
+            this.arrow2.reset();
+            //this.shipExplode(this.target2);
+            this.targetHit(this.target2);
         }
-        if (this.checkCollision(this.p2Rocket, this.ship01)) {
-            this.p2Rocket.reset();
-            //this.shipExplode(this.ship01);
-            this.targetHit(this.ship01);
+        if (this.checkCollision(this.arrow2, this.target1)) {
+            this.arrow2.reset();
+            //this.shipExplode(this.target1);
+            this.targetHit(this.target1);
         }
     }
 
-    checkCollision(rocket, ship) {
+    checkCollision(arrow, target) {
         //simple AABB checking
-        var X = Math.cos(Math.PI * 2 * (ship.arc + 90) / 360) * ship.radius + originX;
-        var Y = Math.sin(Math.PI * 2 * (ship.arc + 90) / 360) * ship.radius + originY;
-        if (rocket.x < X + 64 && 
-            rocket.x + rocket.width > X && 
-            rocket.y < Y + 64 &&
-            rocket.height + rocket.y > Y) {
+        var X = Math.cos(Math.PI * 2 * (target.arc + 90) / 360) * target.radius + originX;
+        var Y = Math.sin(Math.PI * 2 * (target.arc + 90) / 360) * target.radius + originY;
+        if (arrow.x < X + 64 && 
+            arrow.x + arrow.width > X && 
+            arrow.y < Y + 64 &&
+            arrow.height + arrow.y > Y) {
                 return true;
         } else {
             return false;

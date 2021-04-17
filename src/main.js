@@ -12,3 +12,4 @@ let borderPadding = borderUISize / 3;
 let keyUP, keyR, keyLEFT, keyRIGHT, keyW, keyA, keyD;
 let originX = game.config.width / 2;
 let originY = -60;
+let spawnHeight = game.config.height - 66 - borderUISize - borderPadding;

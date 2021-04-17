@@ -5,7 +5,7 @@ class Arrow extends Phaser.GameObjects.Sprite {
 
         scene.add.existing(this);
         this.isFiring = false;
-        this.moveSpeed = 40;
+        this.moveSpeed = 10;
         this.player = player;
         this.sfxRocket = scene.sound.add('sfx_rocket'); // add rocket sfx
     }
@@ -31,11 +31,11 @@ class Arrow extends Phaser.GameObjects.Sprite {
         }
 
         // if fired, move up
-        if (this.isFiring && this.y >= borderUISize * 3 + borderPadding) {
+        if (this.isFiring && this.y >= borderUISize) {
             this.y -= this.moveSpeed;
         }
         // reset on miss
-        if (this.y <= borderUISize * 3 + borderPadding) {
+        if (this.y <= borderUISize) {
             this.isFiring = false;
             this.y = spawnHeight;
             this.x = this.player.x;

@@ -5,7 +5,7 @@ class Player extends Phaser.GameObjects.Sprite {
   
         scene.add.existing(this);
         this.isFiring = false;
-        this.moveSpeed = 40;
+        this.moveSpeed = 5;
         this.player = player;
         this.sfxRocket = scene.sound.add('sfx_rocket'); // add rocket sfx
     }

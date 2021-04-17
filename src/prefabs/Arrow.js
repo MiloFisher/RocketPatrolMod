@@ -7,19 +7,19 @@ class Arrow extends Phaser.GameObjects.Sprite {
         this.isFiring = false;
         this.moveSpeed = 10;
         this.player = player;
-        this.sfxRocket = scene.sound.add('sfx_rocket'); // add rocket sfx
+        this.sfxRocket = scene.sound.add('sfx_arrow_shot'); // add arrow sfx
     }
 
     update() {
         if (this.player.player == 1) {
             // fire button
-            if (Phaser.Input.Keyboard.JustDown(keyW)) {
+            if (Phaser.Input.Keyboard.JustDown(keyW) && !this.isFiring) {
                 this.isFiring = true;
                 this.sfxRocket.play();  // play sfx
             }
         } else {
             // fire button
-            if (Phaser.Input.Keyboard.JustDown(keyUP)) {
+            if (Phaser.Input.Keyboard.JustDown(keyUP) && !this.isFiring) {
                 this.isFiring = true;
                 this.sfxRocket.play();  // play sfx
             }

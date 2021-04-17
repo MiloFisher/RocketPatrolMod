@@ -209,12 +209,11 @@ class Play extends Phaser.Scene {
         });
         if(arrow.player.player == 1) {
             this.p1Score += target.points;
-            this.scoreLeft.text = this.p1Score;
-            this.sound.play('sfx_explosion');
+            this.scoreLeft.text = this.p1Score;   
         } else if (arrow.player.player == 2) {
             this.p2Score += target.points;
             this.scoreRight.text = this.p2Score;
-            this.sound.play('sfx_explosion');
         }
+        this.sound.play('sfx_arrow_impact');
     }
 }

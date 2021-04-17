@@ -31,9 +31,9 @@ class Play extends Phaser.Scene {
         this.background1 = this.add.tileSprite(0, 0, 640, 480, 'background1').setOrigin(0, 0);
        
         // add players
-        this.player1 = new Player(this, game.config.width / 2 + 5, spawnHeight, 'player1', 0, 1).setOrigin(0.5, 0);
+        this.player1 = new Player(this, game.config.width / 2 - 100, spawnHeight, 'player1', 0, 1).setOrigin(0.5, 0);
         this.arrow1 = new Arrow(this, this.player1.x, spawnHeight, 'arrow', 0, this.player1).setOrigin(0.5, 0);
-        this.player2 = new Player(this, game.config.width / 2 - 5, spawnHeight, 'player2', 0, 2).setOrigin(0.5, 0);
+        this.player2 = new Player(this, game.config.width / 2 + 100, spawnHeight, 'player2', 0, 2).setOrigin(0.5, 0);
         this.arrow2 = new Arrow(this, this.player2.x, spawnHeight, 'arrow', 0, this.player2).setOrigin(0.5, 0);
         // add targets
         this.target1 = new Target(this, originX, originY, 'target1', 0, 300, 1, 0).setOrigin(0, 0);
@@ -109,9 +109,19 @@ class Play extends Phaser.Scene {
         scoreConfig1.fixedWidth = 0;
         scoreConfig2.fixedWidth = 0;
         this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
-            this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', scoreConfig1).setOrigin(0.5);
-            this.add.text(game.config.width / 2, game.config.height / 2 + 64, 'Press (R) to Restart or ← for Menu', scoreConfig1).setOrigin(0.5);
-            this.gameOver = true;
+            if(this.p1Score > this.p2Score) {
+                this.add.text(game.config.width / 2, game.config.height / 2, 'PLAYER 1 WINS', scoreConfig1).setOrigin(0.5);
+                this.add.text(game.config.width / 2, game.config.height / 2 + 64, 'Press (R) to Restart or ← for Menu', scoreConfig1).setOrigin(0.5);
+                this.gameOver = true;
+            } else if (this.p1Score < this.p2Score) {
+                this.add.text(game.config.width / 2, game.config.height / 2, 'PLAYER 2 WINS', scoreConfig2).setOrigin(0.5);
+                this.add.text(game.config.width / 2, game.config.height / 2 + 64, 'Press (R) to Restart or ← for Menu', scoreConfig2).setOrigin(0.5);
+                this.gameOver = true;
+            } else {
+                this.add.text(game.config.width / 2, game.config.height / 2, 'TIE GAME', scoreConfig1).setOrigin(0.5);
+                this.add.text(game.config.width / 2, game.config.height / 2 + 64, 'Press (R) to Restart or ← for Menu', scoreConfig2).setOrigin(0.5);
+                this.gameOver = true;
+            }
         }, null, this);
     }
 
@@ -179,23 +189,6 @@ class Play extends Phaser.Scene {
         } else {
             return false;
         }
-    }
-
-    shipExplode(ship) {
-        // temporarily hide ship
-        ship.alpha = 0;
-        // create explosion sprite at ship's position
-        let boom = this.add.sprite(ship.x, ship.y, 'explosion').setOrigin(0, 0);
-        boom.anims.play('explode');             // play explode animation
-        boom.on('animationcomplete', () => {    // callback after anim completes
-          ship.reset();                         // reset ship position
-          ship.alpha = 1;                       // make ship visible again
-          boom.destroy();                       // remove explosion sprite
-        });
-        // score add and repaint
-        this.p1Score += ship.points;
-        this.scoreLeft.text = this.p1Score; 
-        this.sound.play('sfx_explosion'); 
     }
 
     targetHit(target,arrow) {
